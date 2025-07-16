@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Applicant;
 use App\Models\WorkExperience;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class WorkExperienceController extends Controller
@@ -15,12 +16,7 @@ class WorkExperienceController extends Controller
      * @param  \App\Models\Applicant  $applicant
      * @return \Illuminate\View\View
      */
-    public function show(Applicant $applicant)
-    {
-        // Eager load both educationalAttainments and workExperiences
-        $applicant->load(['educationalAttainments', 'workExperiences']);
-        return view('applicants.show', compact('applicant'));
-    }
+    public function show(Applicant $applicant) {}
 
     /**
      * Show the form for adding work experiences for a specific applicant.

@@ -29,7 +29,6 @@ Route::get('/dashboard', function () {
     $totalJobOpenings = JobOpening::count();
     $totalUsers = User::count();
 
-
     return view('dashboard', [
         'totalApplicants' => $totalApplicants,
         'totalJobOpenings' => $totalJobOpenings,
@@ -38,17 +37,38 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 // JobOpening routes
-Route::resource('jobs', JobOpeningController::class)->middleware('auth');
-Route::put('/jobs/{job}/toggleStatus', [JobOpeningController::class, 'toggleStatus'])->middleware('auth')->name('jobs.toggle');
-Route::get('/jobs/{job}/addApplicant', [JobOpeningController::class, 'addApplicant'])->middleware('auth')->name('jobs.add_applicant');
-Route::post('/jobs/{job}/attachApplicant', [JobOpeningController::class, 'attachApplicant'])->middleware('auth')->name('jobs.attach_applicant');
-Route::delete('/jobs/{job}/detachApplicant/{applicant}', [JobOpeningController::class, 'detachApplicant'])->middleware('auth')->name('jobs.detach_applicant');
+Route::middleware('auth')->group(function () {
+    Route::resource('jobs', JobOpeningController::class);
+
+    Route::put(
+        '/jobs/{job}/toggleStatus',
+        [JobOpeningController::class, 'toggleStatus']
+    )->name('jobs.toggle');
+
+    Route::get(
+        '/jobs/{job}/addApplicant',
+        [JobOpeningController::class, 'addApplicant']
+    )->name('jobs.add_applicant');
+
+    Route::post(
+        '/jobs/{job}/attachApplicant',
+        [JobOpeningController::class, 'attachApplicant']
+    )->name('jobs.attach_applicant');
+
+    Route::delete(
+        '/jobs/{job}/detachApplicant/{applicant}',
+        [JobOpeningController::class, 'detachApplicant']
+    )->name('jobs.detach_applicant');
+});
 
 // TODO: implement admin gates to other routes
 // TODO: implement conditionally showing elements on page
@@ -56,7 +76,7 @@ Route::delete('/jobs/{job}/detachApplicant/{applicant}', [JobOpeningController::
 Route::resource('applicants', ApplicantController::class)->middleware('auth');
 
 // Educational attainment routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get(
         '/educational-attainment/applicant/{applicant}',
         [EducationalAttainmentController::class, 'create']
@@ -86,7 +106,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Work experience routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get(
         '/applicants/{applicant}/work-experiences/create',
         [WorkExperienceController::class, 'create']
@@ -119,7 +139,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // References routes
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'can:isAdmin'])->group(function () {
     Route::get(
         '/applicants/{applicant}/references/create',
         [ReferenceController::class, 'create']
