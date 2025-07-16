@@ -172,10 +172,13 @@ Route::middleware(['auth', 'can:isAdmin'])->group(function () {
 });
 
 // Finance routes / Application fee
-Route::resource('application_fees', ApplicationFeeController::class)
+Route::resource('application-fees', ApplicationFeeController::class)
     ->middleware('auth');
 
 // Report Routes
+Route::get('/reports', [ReportController::class, 'index'])
+    ->name('reports.index')->middleware('auth');
+
 Route::get('/reports/jobs', [ReportController::class, 'jobReports'])
     ->name('reports.jobs')->middleware('auth');
 
@@ -221,6 +224,6 @@ Route::get(
 Route::resource(
     'user_management',
     UserManagementController::class
-)->middleware('auth');
+)->middleware(['auth', 'can:isAdmin']);
 
 require __DIR__ . '/auth.php';

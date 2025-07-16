@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Create Application Fee') }}
+            Create Application Fee
         </h2>
     </x-slot>
 
@@ -11,23 +11,35 @@
                 <div class="p-6 text-gray-900">
                     <h1 class="text-3xl font-bold text-gray-900 mb-6">Create New Application Fee</h1>
 
-                    <form method="POST" action="{{ route('application_fees.store') }}">
+                    <form method="POST" action="{{ route('application-fees.store') }}">
                         @csrf
 
-                        {{-- Applicant ID --}}
+                        {{-- Applicant ID - Dynamically rendered based on whether an applicant is pre-selected --}}
                         <div class="mb-4">
-                            <label for="applicant_id" class="block text-sm font-medium text-gray-700">Applicant</label>
-                            <select name="applicant_id" id="applicant_id"
-                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                required>
-                                <option value="">Select an Applicant</option>
-                                @foreach ($applicants as $applicant)
-                                    <option value="{{ $applicant->id }}"
-                                        {{ old('applicant_id') == $applicant->id ? 'selected' : '' }}>
-                                        {{ $applicant->name }} (ID: {{ $applicant->id }})
-                                    </option>
-                                @endforeach
-                            </select>
+                            @if (isset($selectedApplicant))
+                                {{-- If an applicant is pre-selected (from applicant details page) --}}
+                                <label for="applicant_name"
+                                    class="block text-sm font-medium text-gray-700">Applicant</label>
+                                <p class="mt-1 p-2 border border-gray-300 rounded-md bg-gray-50 text-gray-900">
+                                    {{ $selectedApplicant->name }} (ID: {{ $selectedApplicant->id }})
+                                </p>
+                                <input type="hidden" name="applicant_id" value="{{ $selectedApplicant->id }}">
+                            @else
+                                {{-- If no applicant is pre-selected (generic create page) --}}
+                                <label for="applicant_id"
+                                    class="block text-sm font-medium text-gray-700">Applicant</label>
+                                <select name="applicant_id" id="applicant_id"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                                    required>
+                                    <option value="">Select an Applicant</option>
+                                    @foreach ($applicants as $applicant)
+                                        <option value="{{ $applicant->id }}"
+                                            {{ old('applicant_id') == $applicant->id ? 'selected' : '' }}>
+                                            {{ $applicant->name }} (ID: {{ $applicant->id }})
+                                        </option>
+                                    @endforeach
+                                </select>
+                            @endif
                             @error('applicant_id')
                                 <p class="text-sm text-red-600 mt-1">{{ $message }}</p>
                             @enderror
@@ -127,7 +139,7 @@
                         <!-- Action Buttons -->
                         <div class="mt-8 flex justify-end space-x-4">
                             <!-- Back Button -->
-                            <a href="{{ route('application_fees.index') }}"
+                            <a href="{{ route('application-fees.index') }}"
                                 class="inline-flex items-center px-4 py-2 bg-gray-800 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                     xmlns="http://www.w3.org/2000/svg">

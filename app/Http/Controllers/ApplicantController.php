@@ -72,8 +72,9 @@ class ApplicantController extends Controller
     public function show(Applicant $applicant)
     {
         $applicant->load(
-            ['educationalAttainments', 'workExperiences', 'references']
+            ['applicationFees', 'educationalAttainments', 'workExperiences', 'references']
         );
+
         return view('applicants.show', ['applicant' => $applicant]);
     }
 

@@ -13,6 +13,11 @@ use Illuminate\Support\Str; // For string manipulation (e.g., class names)
 
 class ReportController extends Controller
 {
+    public function index()
+    {
+        return view('reports.index');
+    }
+
     public function jobReports(Request $request)
     {
         $query = JobOpening::query();

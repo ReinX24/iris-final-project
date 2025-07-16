@@ -27,6 +27,11 @@ class Applicant extends Model
             ->withTimestamps();
     }
 
+    public function applicationFees()
+    {
+        return $this->hasMany(ApplicationFee::class);
+    }
+
     public function educationalAttainments()
     {
         return $this->hasMany(EducationalAttainment::class);

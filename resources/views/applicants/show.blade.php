@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Applicant Details') }}
+            Applicant Details
         </h2>
     </x-slot>
 
@@ -262,6 +262,99 @@
                                 No Curriculum Vitae available.
                             </div>
                         @endif
+                    </div>
+
+                    {{-- Application Fees Section --}}
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3">Application Fees</h3>
+
+                        <!-- Add Application Fee Button -->
+                        <div class="flex justify-end mb-6">
+                            <a href="{{ route('application-fees.create', ['applicant_id' => $applicant->id]) }}"
+                                class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 4v16m8-8H4">
+                                    </path>
+                                </svg>
+                                Add Application Fee
+                            </a>
+                        </div>
+
+                        {{-- Application Fees Table --}}
+                        <div class="overflow-x-auto shadow-md sm:rounded-lg">
+                            @if ($applicant->applicationFees->isNotEmpty())
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                ID</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Job Opening</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Amount</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Payment Date</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Payment Method</th>
+                                            <th scope="col"
+                                                class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                                Notes</th>
+                                            <th scope="col" class="relative px-6 py-3"><span
+                                                    class="sr-only">Actions</span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200">
+                                        @foreach ($applicant->applicationFees as $fee)
+                                            <tr class="hover:bg-gray-50">
+                                                <td
+                                                    class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                    {{ $fee->id }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $fee->jobOpening->title ?? 'N/A' }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ number_format($fee->amount, 2) }} {{ $fee->currency }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $fee->payment_date ? \Carbon\Carbon::parse($fee->payment_date)->format('M d, Y') : 'N/A' }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                    {{ $fee->payment_method }}
+                                                </td>
+                                                <td class="px-6 py-4 text-sm text-gray-900 max-w-xs truncate"
+                                                    title="{{ $fee->notes }}">
+                                                    {{ $fee->notes ?? 'N/A' }}
+                                                </td>
+                                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                                    <a href="{{ route('application-fees.edit', $fee->id) }}"
+                                                        class="text-indigo-600 hover:text-indigo-900 mr-2">Edit</a>
+                                                    <form action="{{ route('application-fees.destroy', $fee->id) }}"
+                                                        method="POST" class="inline-block"
+                                                        onsubmit="return confirm('Are you sure you want to delete this application fee record?');">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="text-red-600 hover:text-red-900">Delete</button>
+                                                    </form>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @else
+                                <div class="bg-gray-50 p-4 rounded-md shadow-inner text-center text-gray-500 italic">
+                                    No application fee records found for this applicant.
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
                     {{-- References Section --}}
